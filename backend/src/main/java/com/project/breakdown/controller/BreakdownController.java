@@ -44,6 +44,25 @@ public class BreakdownController {
 		return service.getAllPendingRequests();
 	}
 	
+	@GetMapping("/my-requests")
+	public List<BreakdownRequest> getAllRequests(HttpServletRequest httpRequest) {
+		
+		String authHeader = httpRequest.getHeader("Authorization");
+		String token = null;
+		
+		if(authHeader!=null && authHeader.startsWith("Bearer ")){
+			token = authHeader.substring(7);
+		}
+		
+		return service.getAllRequests(token);
+	}
+	
+	@GetMapping("/{id}")
+	public BreakdownRequest getRequestById(@PathVariable String id) {
+		
+	    return service.getRequestById(id);
+	}
+	
 	@PutMapping("/accept/{id}")
 	public BreakdownRequest accept(@PathVariable String id, @RequestParam String mechanicEmail) {
 		return service.acceptRequest(id,mechanicEmail);

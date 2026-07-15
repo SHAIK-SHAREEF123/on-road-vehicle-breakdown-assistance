@@ -19,6 +19,7 @@ public class UserService {
 	
 	public User signup(User user) {
 		user.setPassword(encoder.encode(user.getPassword()));
+//		System.out.println("Service layer User Check : " + user);
 		return userRepo.save(user);
 	}
 	

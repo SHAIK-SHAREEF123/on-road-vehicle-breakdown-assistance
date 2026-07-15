@@ -1,6 +1,6 @@
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "../axiosConfig"
 
 const Signup = () => {
 
@@ -24,11 +24,11 @@ const Signup = () => {
     const handleSignup = async (e) => {
         e.preventDefault();
 
-        console.log("Signup Data:", form);
+        // console.log("Signup Data:", form);
 
         // 🔥 Later connect to backend API
         try {
-            const response = await axios.post("http://localhost/api/users/signup", {
+            const response = await axios.post("/api/auth/signup", {
                 name: form.name,
                 email: form.email,
                 password: form.password,
@@ -36,11 +36,12 @@ const Signup = () => {
                 role: form.role.toUpperCase(),
             });
 
+            console.log(response.data);
             alert("Signup Successful!");
             navigate("/login");
 
         } catch (error) {
-            console.error(error);
+            console.error(error.message);
 
             if (error.response) {
                 alert("❌ " + error.response.data.message);

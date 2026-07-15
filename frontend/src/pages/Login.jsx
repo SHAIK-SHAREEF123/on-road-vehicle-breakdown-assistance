@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "../axiosConfig";
 
 const Login = () => {
 
@@ -15,7 +16,7 @@ const Login = () => {
 
         // 🔥 Later connect to backend API
         try {
-            const response = await axios.post("http://localhost:8080/api/users/login", {
+            const response = await axios.post("/api/auth/login", {
                 email,
                 password,
             });

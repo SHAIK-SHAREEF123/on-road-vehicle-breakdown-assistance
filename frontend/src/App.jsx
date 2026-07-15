@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { connectSocket } from "./socket";
 
 import { Route, Routes } from "react-router-dom";
-import Home from "./Home";
-import Signup from "./Signup";
-import Login from "./Login";
+import Home from "./pages/Home";
+import Signup from "./pages/Signup";
+import Login from "./pages/Login";
 import UserDashboard from "./pages/UserDashboard";
-import MechanicDashboard from "./MechanicDashboard";
-import ProtectedRoute from "./ProtectedRoute";
+import MechanicDashboard from "./pages/MechanicDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
+import BreakdownRequest from "./pages/ BreakdownRequest";
 
 function App() {
   const [requests, setRequests] = useState([]);
@@ -29,10 +30,15 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Home />} />
+
       <Route path="/signup" element={<Signup />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/user" element={<UserDashboard /> } />
-      <Route path="/mechanic" element={<ProtectedRoute allowedRole="MECHANIC"><MechanicDashboard /> </ProtectedRoute>} />
+
+      <Route path="/user" element={<ProtectedRoute allowedRole="USER"> <UserDashboard /> </ProtectedRoute> } />
+      <Route path="/mechanic" element={<ProtectedRoute allowedRole="MECHANIC"><MechanicDashboard /> </ProtectedRoute>} />\
+
+      <Route path="/breakdown-request" element={<BreakdownRequest />} />
+
     </Routes>
   );
 }

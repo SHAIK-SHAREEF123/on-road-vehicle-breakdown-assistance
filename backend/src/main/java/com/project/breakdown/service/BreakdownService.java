@@ -13,12 +13,12 @@ import com.project.breakdown.util.JwtUtil;
 public class BreakdownService {
 	
 	private final BreakdownRepository repo;
-	private final SimpMessagingTemplate messagingTemplate;
+//	private final SimpMessagingTemplate messagingTemplate;
 	private final JwtUtil jwtUtil;
 	
 	public BreakdownService(BreakdownRepository repo, SimpMessagingTemplate messagingTemplate, JwtUtil jwtUtil) {
 		this.repo = repo;
-		this.messagingTemplate = messagingTemplate;
+//		this.messagingTemplate = messagingTemplate;
 		this.jwtUtil = jwtUtil;
 	}
 
@@ -31,7 +31,7 @@ public class BreakdownService {
 		BreakdownRequest saved = repo.save(request);
 		
 //		System.out.println("🔥 Sending WebSocket message...");
-		messagingTemplate.convertAndSend("/topic/requests", saved);
+//		messagingTemplate.convertAndSend("/topic/requests", saved);
 		
 		return saved;
 		
@@ -39,6 +39,17 @@ public class BreakdownService {
 	
 	public List<BreakdownRequest> getAllPendingRequests() {
 		return repo.findByStatus("PENDING");
+	}
+	
+	public List<BreakdownRequest> getAllRequests(String token) {
+		String userEmail = jwtUtil.extractEmail(token);
+		return repo.findByUserEmail(userEmail);
+	}
+	
+	public BreakdownRequest getRequestById(String id) {
+		
+	    return repo.findById(id)
+	            .orElseThrow(() -> new RuntimeException("Request not found"));
 	}
 	
 	public BreakdownRequest acceptRequest(String id, String mechanicEmail) {
@@ -50,7 +61,7 @@ public class BreakdownService {
 		
 		BreakdownRequest saved = repo.save(req);
 		
-		messagingTemplate.convertAndSend("/topic/accepted", saved);
+//		messagingTemplate.convertAndSend("/topic/accepted", saved);
 		
 		return saved;
 	}

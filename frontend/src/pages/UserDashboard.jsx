@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useEffectEvent, useState } from "react";
+import axios from "../axiosConfig";
 import DashboardHeader from "../components/DashboardHeader";
 import StatsCards from "../components/StatsCards";
 import BreakdownForm from "../components/BreakdownForm";
@@ -6,28 +7,26 @@ import RecentRequests from "../components/RecentRequests";
 import SOSButton from "../components/SOSButton";
 
 const UserDashboard = () => {
-    const [requests, setRequests] = useState([
-        {
-            id: 1,
-            vehicleType: "Car",
-            issue: "Flat Tire",
-            location: "Hyderabad",
-            status: "Searching Mechanic",
-            createdAt: "2 mins ago",
-        },
-        {
-            id: 2,
-            vehicleType: "Bike",
-            issue: "Battery Dead",
-            location: "Warangal",
-            status: "Completed",
-            createdAt: "Yesterday",
-        },
-    ]);
-
+    const [requests, setRequests] = useState([]);
     const addRequest = (newRequest) => {
         setRequests((prev) => [newRequest, ...prev]);
     };
+
+    const fetchRequests = async () => {
+        try {
+
+            const response = await axios.get("/api/breakdown/my-requests");
+            setRequests(response.data);
+
+        } catch (error) {
+            console.log(error.data);
+        }
+
+    }
+
+    useEffect(() => {
+        fetchRequests();
+    }, []);
 
     return (
         <div className="min-h-screen bg-gray-100">

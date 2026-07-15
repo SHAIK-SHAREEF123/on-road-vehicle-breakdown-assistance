@@ -22,6 +22,8 @@ public class BreakdownRequest {
     private String vehicleType;
 
     private String issue;
+    
+    private String description;
 
     private String status; // PENDING, ACCEPTED
 

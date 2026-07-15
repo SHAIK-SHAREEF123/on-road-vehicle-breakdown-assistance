@@ -9,4 +9,6 @@ import com.project.breakdown.model.BreakdownRequest;
 public interface BreakdownRepository extends MongoRepository<BreakdownRequest, String>{
 	
 	List<BreakdownRequest> findByStatus(String status);
+
+	List<BreakdownRequest> findByUserEmail(String userEmail);
 }

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,7 +17,8 @@ import com.project.breakdown.service.UserService;
 import com.project.breakdown.util.JwtUtil;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:5173")
 public class UserController {
 	
 	private final UserService userService;
@@ -28,13 +30,13 @@ public class UserController {
 		
 	}
 	
-	@PostMapping("/signup")
+	@PostMapping("/auth/signup")
 	public User signup(@RequestBody User user) {
 		
 		return userService.signup(user);
 	}
 	
-	@PostMapping("/login")
+	@PostMapping("/auth/login")
 	public Map<String,String> login(@RequestBody User user) {
 		
 		User existing = userService.login(user.getEmail(), user.getPassword());
@@ -44,13 +46,14 @@ public class UserController {
 		if(existing!=null) {
 			String token = jwtUtil.generateToken(existing.getEmail());
 			response.put("token", token);
+			response.put("role", existing.getRole());
 		} else {
 			response.put("error", "Invalid Credentials");
 		}
 		return response;
 	}
 
-	@GetMapping("/")
+	@GetMapping("/getAllUsers")
 	public List<User> getAllUsers() {
 //		userService.getAllUsers();
 		return new ArrayList<>();

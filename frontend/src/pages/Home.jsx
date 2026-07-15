@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import Login from "./Login";
 
 const Home = () => {
 
@@ -102,7 +103,7 @@ const Home = () => {
                     Connect with mechanics instantly 🚗
                 </p>
 
-                <button className="mt-4 bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold">
+                <button onClick={() => navigate("/login")} className="mt-4 bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold">
                     Get Started
                 </button>
             </div>
