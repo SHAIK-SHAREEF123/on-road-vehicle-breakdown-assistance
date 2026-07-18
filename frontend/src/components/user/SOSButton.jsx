@@ -1,5 +1,5 @@
 import { Siren, PhoneCall, ShieldAlert } from "lucide-react";
-import axios from "../axiosConfig";
+import axios from "../../axiosConfig";
 
 const SOSButton = () => {
 

@@ -27,6 +27,7 @@ const Login = () => {
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.role);
+            localStorage.setItem("name", data.name);
 
             alert("Login Successful");
 

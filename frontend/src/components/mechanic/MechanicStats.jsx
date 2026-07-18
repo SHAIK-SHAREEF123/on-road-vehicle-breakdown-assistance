@@ -1,48 +1,50 @@
 import {
-    Clock3,
+    Wrench,
+    ClipboardCheck,
     CheckCircle,
-    ClipboardList,
 } from "lucide-react";
 
-const StatsCards = ({ requests }) => {
+const MechanicStats = ({ pendingRequests, acceptedRequests }) => {
 
-    const activeRequests = requests.filter(
-        (req) =>
-            req.status === "Searching Mechanic" ||
-            req.status === "Mechanic Assigned"
+    const availableRequests = pendingRequests.length;
+
+    const acceptedCount = acceptedRequests.filter(
+        (request) =>
+            request.status === "MECHANIC_ASSIGNED" ||
+            request.status === "MECHANIC_ON_THE_WAY" ||
+            request.status === "REPAIR_STARTED"
     ).length;
 
-    const completedRequests = requests.filter(
-        (req) => req.status === "Completed"
+    const completedCount = acceptedRequests.filter(
+        (request) => request.status === "COMPLETED"
     ).length;
-
-    const totalRequests = requests.length;
 
     const cards = [
         {
-            title: "Active Requests",
-            value: activeRequests,
-            icon: <Clock3 size={34} />,
+            title: "Available Requests",
+            value: availableRequests,
+            icon: <Wrench size={34} />,
             bg: "bg-yellow-100",
             text: "text-yellow-600",
         },
         {
-            title: "Completed",
-            value: completedRequests,
+            title: "Accepted Requests",
+            value: acceptedCount,
+            icon: <ClipboardCheck size={34} />,
+            bg: "bg-blue-100",
+            text: "text-blue-600",
+        },
+        {
+            title: "Completed Repairs",
+            value: completedCount,
             icon: <CheckCircle size={34} />,
             bg: "bg-green-100",
             text: "text-green-600",
         },
-        {
-            title: "Total Requests",
-            value: totalRequests,
-            icon: <ClipboardList size={34} />,
-            bg: "bg-blue-100",
-            text: "text-blue-600",
-        },
     ];
 
     return (
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
             {cards.map((card, index) => (
@@ -64,10 +66,10 @@ const StatsCards = ({ requests }) => {
 
                     </div>
 
-                    <div
-                        className={`${card.bg} ${card.text} p-4 rounded-full`}
-                    >
+                    <div className={`${card.bg} ${card.text} p-4 rounded-full`}>
+
                         {card.icon}
+
                     </div>
 
                 </div>
@@ -75,7 +77,8 @@ const StatsCards = ({ requests }) => {
             ))}
 
         </div>
+
     );
 };
 
-export default StatsCards;
+export default MechanicStats;

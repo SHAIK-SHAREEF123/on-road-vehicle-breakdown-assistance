@@ -1,9 +1,13 @@
 package com.project.breakdown.model;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import lombok.*;
+
+
 
 @Document(collection = "requests")
 @Data
@@ -11,6 +15,16 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BreakdownRequest {
+	
+	public enum RequestStatus {
+	    PENDING,
+	    SEARCHING_MECHANIC,
+	    MECHANIC_ASSIGNED,
+	    MECHANIC_ON_THE_WAY,
+	    REPAIR_STARTED,
+	    COMPLETED,
+	    CANCELLED
+	}
 
     @Id
     private String id;
@@ -25,7 +39,14 @@ public class BreakdownRequest {
     
     private String description;
 
-    private String status; // PENDING, ACCEPTED
+    private RequestStatus status;
 
     private String mechanicEmail;
+    
+    private LocalDateTime createdAt;
+
+	public void setStatus(RequestStatus status) {
+		// TODO Auto-generated method stub
+		this.status = status;
+	}
 }

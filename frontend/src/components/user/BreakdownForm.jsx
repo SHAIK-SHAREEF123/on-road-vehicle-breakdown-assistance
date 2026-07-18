@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { MapPin, Send, Loader2 } from "lucide-react";
-import axios from "../axiosConfig";
+import axios from "../../axiosConfig";
 
 const BreakdownForm = ({ addRequest }) => {
 

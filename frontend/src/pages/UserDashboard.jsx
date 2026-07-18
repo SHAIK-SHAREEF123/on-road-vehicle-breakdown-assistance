@@ -1,10 +1,11 @@
 import { useEffect, useEffectEvent, useState } from "react";
 import axios from "../axiosConfig";
 import DashboardHeader from "../components/DashboardHeader";
-import StatsCards from "../components/StatsCards";
-import BreakdownForm from "../components/BreakdownForm";
-import RecentRequests from "../components/RecentRequests";
-import SOSButton from "../components/SOSButton";
+import StatsCards from "../components/user/StatsCards";
+import BreakdownForm from "../components/user/BreakdownForm";
+import RecentRequests from "../components/user/RecentRequests";
+import SOSButton from "../components/user/SOSButton";
+import { Link } from "react-router-dom";
 
 const UserDashboard = () => {
     const [requests, setRequests] = useState([]);
@@ -44,7 +45,21 @@ const UserDashboard = () => {
                     {/* Left Side */}
                     <div className="lg:col-span-2">
 
-                        <BreakdownForm addRequest={addRequest} />
+                        <Link to="/create-request">
+
+                            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl p-8 shadow-lg hover:scale-105 transition">
+
+                                <h2 className="text-2xl font-bold">
+                                    🚗 Create Breakdown Request
+                                </h2>
+
+                                <p className="mt-2">
+                                    Need roadside assistance? Click here to create a new request.
+                                </p>
+
+                            </div>
+
+                        </Link>
 
                         <div className="mt-8">
                             <RecentRequests requests={requests} />
@@ -72,6 +87,16 @@ const UserDashboard = () => {
                                 <li>📞 Keep your phone reachable.</li>
 
                                 <li>🛠 Wait safely until mechanic arrives.</li>
+
+                                <li>🛠 Stay in a safe place while waiting.</li>
+
+                                <li>🔋 If it's night, keep your parking lights on.</li>
+
+                                <li>🚧 Place a warning triangle behind your vehicle if available.</li>
+
+                                <li>⛽ If you're on a highway, move the vehicle to the roadside if possible.</li>
+
+                                <li>🚑 In case of an accident or emergency, call the SOS service immediately.</li>
 
                             </ul>
 

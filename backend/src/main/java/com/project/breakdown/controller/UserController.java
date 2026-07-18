@@ -8,6 +8,7 @@ import java.util.Map;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.project.breakdown.model.User;
 import com.project.breakdown.service.UserService;
 import com.project.breakdown.util.JwtUtil;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api")
@@ -47,15 +50,38 @@ public class UserController {
 			String token = jwtUtil.generateToken(existing.getEmail());
 			response.put("token", token);
 			response.put("role", existing.getRole());
+			response.put("name", existing.getName());
 		} else {
 			response.put("error", "Invalid Credentials");
 		}
 		return response;
+	}
+	
+	@GetMapping("/auth/profile")
+	public User getProfile(HttpServletRequest request) {
+		String authHeader = request.getHeader("Authorization");
+
+	    String token = authHeader.substring(7);
+
+	    return userService.getProfile(token);
 	}
 
 	@GetMapping("/getAllUsers")
 	public List<User> getAllUsers() {
 //		userService.getAllUsers();
 		return new ArrayList<>();
+	}
+	
+	@PutMapping("/auth/update-profile")
+	public User updateProfile(
+	        @RequestBody User updatedUser,
+	        HttpServletRequest request
+	){
+
+	    String authHeader = request.getHeader("Authorization");
+	    String token = authHeader.substring(7);
+
+	    return userService.updateProfile(token, updatedUser);
+
 	}
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Navigate } from 'react-router-dom';
 
 const ProtectedRoute = ({children, allowedRole}) => {
     const token = localStorage.getItem("token");
@@ -9,7 +10,7 @@ const ProtectedRoute = ({children, allowedRole}) => {
     }
 
     if(allowedRole && allowedRole!=role) {
-        return <Navigate to="/" />
+        return <Navigate to="/login" />
     }
 
     return children;
