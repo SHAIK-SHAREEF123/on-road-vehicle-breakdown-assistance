@@ -6,6 +6,8 @@ import MechanicStats from "../components/mechanic/MechanicStats";
 import AvailableRequests from "../components/mechanic/AvailableRequests";
 import AcceptedRequests from "../components/mechanic/AcceptedRequests";
 
+import { connectWebSocket, disconnectWebSocket } from "../services/websocket";
+
 const MechanicDashboard = () => {
 
     const [pendingRequests, setPendingRequests] = useState([]);
@@ -39,6 +41,43 @@ const MechanicDashboard = () => {
     useEffect(() => {
         fetchPendingRequests();
         fetchAcceptedRequests();
+    }, []);
+
+    useEffect(() => {
+
+        connectWebSocket((client) => {
+
+            client.subscribe("/topic/pending-requests", (message) => {
+
+                const newRequest = JSON.parse(message.body);
+
+                setPendingRequests((prev) => [
+                    newRequest,
+                    ...prev,
+                ]);
+
+            });
+
+            client.subscribe("/topic/request-accepted",(message) => {
+                
+                    const acceptedRequest = JSON.parse(message.body);
+
+                    setPendingRequests((prev) =>
+                        prev.filter(
+                            (request) =>
+                                request.id !== acceptedRequest.id
+                        )
+                    );
+
+                }
+            );
+
+        });
+
+        return () => {
+            disconnectWebSocket();
+        };
+
     }, []);
 
     return (

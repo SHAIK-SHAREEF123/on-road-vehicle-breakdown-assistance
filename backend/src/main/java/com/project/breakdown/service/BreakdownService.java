@@ -36,7 +36,7 @@ public class BreakdownService {
 		request.setStatus(RequestStatus.SEARCHING_MECHANIC);
 		saved = repo.save(request);
 //		System.out.println("🔥 Sending WebSocket message...");
-//		messagingTemplate.convertAndSend("/topic/requests", saved);
+		messagingTemplate.convertAndSend("/topic/pending-requests", saved);
 		
 		return saved;
 		
@@ -106,6 +106,8 @@ public class BreakdownService {
 		
 //		System.out.println(saved.getStatus());
 		messagingTemplate.convertAndSend("/topic/request/" + saved.getId(),saved);
+		
+		messagingTemplate.convertAndSend("/topic/request-accepted",saved);
 	
 		return saved;
 	}
@@ -123,11 +125,11 @@ public class BreakdownService {
 
 	    String mechanicEmail = jwtUtil.extractEmail(token);
 	    
-	    System.out.println("Mechanic Email : " + mechanicEmail);
+//	    System.out.println("Mechanic Email : " + mechanicEmail);
 	    
 	    List<BreakdownRequest> saved = repo.findByMechanicEmail(mechanicEmail);
 	    
-	    System.out.println("Accepted Requests : " + saved);
+//	    System.out.println("Accepted Requests : " + saved);
 	    return saved;
 
 	}

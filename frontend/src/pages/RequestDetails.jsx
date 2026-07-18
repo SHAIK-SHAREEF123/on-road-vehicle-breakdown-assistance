@@ -40,8 +40,8 @@ const RequestDetails = () => {
                 `/topic/request/${id}`,
                 (message) => {
 
+                    // console.log(message.body);
                     const updatedRequest = JSON.parse(message.body);
-                    console.log(updatedRequest);
                     setRequest(updatedRequest);
 
                 }
