@@ -2,8 +2,19 @@ import SockJS from "sockjs-client";
 import { Client } from "@stomp/stompjs";
 
 let client = null;
+let isConnected = false;
 
 export const connectWebSocket = (onConnect) => {
+
+    // Already connected
+    if (client && isConnected) {
+
+        if (onConnect) {
+            onConnect(client);
+        }
+
+        return;
+    }
 
     const socket = new SockJS("http://localhost:8080/ws");
 
@@ -17,13 +28,25 @@ export const connectWebSocket = (onConnect) => {
 
             console.log("✅ Connected");
 
-            onConnect(client);
+            isConnected = true;
+
+            if (onConnect) {
+                onConnect(client);
+            }
 
         },
 
         onStompError: (frame) => {
 
-            console.log(frame);
+            console.error(frame);
+
+        },
+
+        onDisconnect: () => {
+
+            isConnected = false;
+
+            console.log("❌ Disconnected");
 
         }
 
@@ -38,6 +61,10 @@ export const disconnectWebSocket = () => {
     if (client) {
 
         client.deactivate();
+
+        client = null;
+
+        isConnected = false;
 
     }
 

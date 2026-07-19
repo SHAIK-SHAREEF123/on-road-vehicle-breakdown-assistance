@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../axiosConfig"
+import toast from "react-hot-toast";
 
 const Signup = () => {
 
@@ -36,9 +37,10 @@ const Signup = () => {
                 role: form.role.toUpperCase(),
             });
 
-            console.log(response.data);
-            alert("Signup Successful!");
+            // console.log(response.data);
+            // alert("Signup Successful!");
             navigate("/login");
+            toast.success("Account created successfully!");
 
         } catch (error) {
             console.error(error.message);

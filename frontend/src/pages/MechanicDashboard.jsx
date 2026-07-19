@@ -7,6 +7,7 @@ import AvailableRequests from "../components/mechanic/AvailableRequests";
 import AcceptedRequests from "../components/mechanic/AcceptedRequests";
 
 import { connectWebSocket, disconnectWebSocket } from "../services/websocket";
+import toast from "react-hot-toast";
 
 const MechanicDashboard = () => {
 
@@ -44,10 +45,11 @@ const MechanicDashboard = () => {
     }, []);
 
     useEffect(() => {
-
+        let pendingSubscription;
+        let acceptedSubscription;
         connectWebSocket((client) => {
 
-            client.subscribe("/topic/pending-requests", (message) => {
+            pendingSubscription = client.subscribe("/topic/pending-requests", (message) => {
 
                 const newRequest = JSON.parse(message.body);
 
@@ -56,26 +58,32 @@ const MechanicDashboard = () => {
                     ...prev,
                 ]);
 
+                toast.success("🚗 New breakdown request received!");
+
             });
 
-            client.subscribe("/topic/request-accepted",(message) => {
-                
-                    const acceptedRequest = JSON.parse(message.body);
+            acceptedSubscription = client.subscribe("/topic/request-accepted", (message) => {
 
-                    setPendingRequests((prev) =>
-                        prev.filter(
-                            (request) =>
-                                request.id !== acceptedRequest.id
-                        )
-                    );
+                const acceptedRequest = JSON.parse(message.body);
 
-                }
+                setPendingRequests((prev) =>
+                    prev.filter(
+                        (request) =>
+                            request.id !== acceptedRequest.id
+                    )
+                );
+
+            }
             );
 
         });
 
         return () => {
-            disconnectWebSocket();
+
+            pendingSubscription?.unsubscribe();
+
+            acceptedSubscription?.unsubscribe();
+
         };
 
     }, []);

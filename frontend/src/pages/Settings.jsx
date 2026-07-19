@@ -15,10 +15,14 @@ const Settings = () => {
             document.documentElement.classList.add("dark");
             localStorage.setItem("theme", "dark");
 
+            toast("🌙 Dark mode enabled");
+
         } else {
 
             document.documentElement.classList.remove("dark");
             localStorage.setItem("theme", "light");
+
+            toast("☀️ Light mode enabled");
 
         }
 

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.project.breakdown.model.BreakdownRequest;
 import com.project.breakdown.model.BreakdownRequest.RequestStatus;
+import com.project.breakdown.model.NotificationMessage;
 import com.project.breakdown.repository.BreakdownRepository;
 import com.project.breakdown.util.JwtUtil;
 
@@ -37,6 +38,13 @@ public class BreakdownService {
 		saved = repo.save(request);
 //		System.out.println("🔥 Sending WebSocket message...");
 		messagingTemplate.convertAndSend("/topic/pending-requests", saved);
+		messagingTemplate.convertAndSend(
+		        "/topic/mechanics",
+		        new NotificationMessage(
+		                "INFO",
+		                "🚨 New breakdown request received."
+		        )
+		);
 		
 		return saved;
 		
@@ -88,6 +96,29 @@ public class BreakdownService {
 
 	    request.setStatus(RequestStatus.CANCELLED);
 	    repo.save(request);
+	    
+	    messagingTemplate.convertAndSend(
+	            "/topic/request/" + request.getId(),
+	            request
+	    );
+	    
+	    messagingTemplate.convertAndSend(
+	            "/topic/mechanics",
+	            new NotificationMessage(
+	                    "ERROR",
+	                    "❌ A user cancelled a breakdown request."
+	            )
+	    );
+	    
+	    if (request.getMechanicEmail() != null) {
+
+	        sendNotification(
+	            request.getMechanicEmail(),
+	            "ERROR",
+	            "❌ The user cancelled the request."
+	        );
+
+	    }
 
 	    return "Request Cancelled Successfully";
 	}
@@ -108,6 +139,18 @@ public class BreakdownService {
 		messagingTemplate.convertAndSend("/topic/request/" + saved.getId(),saved);
 		
 		messagingTemplate.convertAndSend("/topic/request-accepted",saved);
+		
+		sendNotification(
+		        mechanicEmail,
+		        "SUCCESS",
+		        "✅ You accepted a new request."
+		);
+		
+		sendNotification(
+		        saved.getUserEmail(),
+		        "SUCCESS",
+		        "🔧 A mechanic has accepted your request."
+		);
 	
 		return saved;
 	}
@@ -155,7 +198,33 @@ public class BreakdownService {
 	    
 	    messagingTemplate.convertAndSend("/topic/request/" + saved.getId(),saved);
 	    
+	    sendNotification(
+	            saved.getUserEmail(),
+	            "SUCCESS",
+	            "📢 Your request status changed to " + saved.getStatus()
+	    );
+	    sendNotification(
+	            mechanicEmail,
+	            "SUCCESS",
+	            "📢 Status updated successfully."
+	    );
+	    
 	    return saved;
 	}	
+	
+	
+	private void sendNotification(
+            String email,
+            String type,
+            String message) {
+
+        NotificationMessage notification =
+                new NotificationMessage(type, message);
+
+        messagingTemplate.convertAndSend(
+                "/topic/notifications/" + email,
+                notification
+        );
+    }
 
 }

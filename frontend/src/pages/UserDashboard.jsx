@@ -6,6 +6,7 @@ import BreakdownForm from "../components/user/BreakdownForm";
 import RecentRequests from "../components/user/RecentRequests";
 import SOSButton from "../components/user/SOSButton";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const UserDashboard = () => {
     const [requests, setRequests] = useState([]);

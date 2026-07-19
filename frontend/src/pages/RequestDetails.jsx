@@ -14,6 +14,7 @@ import {
     FileText,
 } from "lucide-react";
 import { connectWebSocket, disconnectWebSocket } from "../services/websocket";
+import toast from "react-hot-toast";
 
 const RequestDetails = () => {
 
@@ -31,10 +32,10 @@ const RequestDetails = () => {
             console.log(error);
         }
     };
-
+    
     useEffect(() => {
 
-        connectWebSocket((client) => {
+        const subscription = connectWebSocket((client) => {
 
             client.subscribe(
                 `/topic/request/${id}`,
@@ -44,15 +45,35 @@ const RequestDetails = () => {
                     const updatedRequest = JSON.parse(message.body);
                     setRequest(updatedRequest);
 
+                    switch (updatedRequest.status) {
+
+                        case "MECHANIC_ASSIGNED":
+                            toast.success("🔧 A mechanic has accepted your request.");
+                            break;
+
+                        case "MECHANIC_ON_THE_WAY":
+                            toast("🚗 Your mechanic is on the way.");
+                            break;
+
+                        case "REPAIR_STARTED":
+                            toast("🛠️ Repair has started.");
+                            break;
+
+                        case "COMPLETED":
+                            toast.success("✅ Your vehicle has been repaired.");
+                            break;
+
+                        default:
+                            break;
+                    }
+
                 }
             );
 
         });
 
         return () => {
-
-            disconnectWebSocket();
-
+            subscription?.unsubscribe();
         };
 
     }, [id]);
@@ -81,10 +102,11 @@ const RequestDetails = () => {
 
         try {
             const response = await axios.delete(`/api/breakdown/${request.id}`);
-            alert(response.data);
             navigate("/user");
+
+            toast.success("Request deleted successfully!");
         } catch (error) {
-            console.log(error.response?.data || "Unable to Cancel")
+            toast.error("Unable to cancel");
         }
     }
 

@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 
 import { useNavigate, Link } from "react-router-dom";
+import { disconnectWebSocket } from "../services/websocket";
+import NotificationDropdown from "./NotificationDropdown";
+import { useNotifications } from "../context/NotificationContext";
 
 const DashboardHeader = () => {
 
@@ -24,34 +27,35 @@ const DashboardHeader = () => {
     const isMechanic = role === "MECHANIC";
 
     const [showMenu, setShowMenu] = useState(false);
+    const [showNotifications, setShowNotifications] = useState(false);
+
+    const { unreadCount } = useNotifications();
 
     const menuRef = useRef(null);
+    const notificationRef = useRef(null);
 
-    useEffect(() => {
 
-        const handleClickOutside = (event) => {
+    const handleClickOutside = (event) => {
 
-            if (
-                menuRef.current &&
-                !menuRef.current.contains(event.target)
-            ) {
-                setShowMenu(false);
-            }
+        if (
+            menuRef.current &&
+            !menuRef.current.contains(event.target)
+        ) {
+            setShowMenu(false);
+        }
 
-        };
+        if (
+            notificationRef.current &&
+            !notificationRef.current.contains(event.target)
+        ) {
+            setShowNotifications(false);
+        }
 
-        document.addEventListener("mousedown", handleClickOutside);
-
-        return () =>
-            document.removeEventListener(
-                "mousedown",
-                handleClickOutside
-            );
-
-    }, []);
+    };
 
     const handleLogout = () => {
 
+        disconnectWebSocket();
         localStorage.clear();
         navigate("/login");
 
@@ -61,6 +65,24 @@ const DashboardHeader = () => {
         role === "MECHANIC"
             ? "/mechanic"
             : "/user";
+
+    useEffect(() => {
+
+        document.addEventListener(
+            "mousedown",
+            handleClickOutside
+        );
+
+        return () => {
+
+            document.removeEventListener(
+                "mousedown",
+                handleClickOutside
+            );
+
+        };
+
+    }, []);
 
     return (
 
@@ -131,17 +153,52 @@ const DashboardHeader = () => {
 
                     {/* Notification */}
 
-                    <button className="relative hover:text-blue-600 transition">
+                    <div
+                        className="relative"
+                        ref={notificationRef}
+                    >
 
-                        <Bell size={24} />
+                        <button
+                            onClick={() =>
+                                setShowNotifications(!showNotifications)
+                            }
+                            className="relative hover:text-blue-600 transition"
+                        >
 
-                        <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                            <Bell size={24} />
 
-                            0
+                            {unreadCount > 0 && (
 
-                        </span>
+                                <span
+                                    className="
+                    absolute
+                    -top-2
+                    -right-2
+                    bg-red-500
+                    text-white
+                    text-xs
+                    w-5
+                    h-5
+                    rounded-full
+                    flex
+                    items-center
+                    justify-center
+                "
+                                >
 
-                    </button>
+                                    {unreadCount}
+
+                                </span>
+
+                            )}
+
+                        </button>
+
+                        {showNotifications && (
+                            <NotificationDropdown />
+                        )}
+
+                    </div>
 
                     {/* Profile Dropdown */}
 

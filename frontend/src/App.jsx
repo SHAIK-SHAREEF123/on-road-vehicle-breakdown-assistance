@@ -15,9 +15,13 @@ import MechanicRequestDetails from "./pages/MechanicRequestDetails";
 import Profile from "./pages/Profile";
 import Settings from "./pages/Settings";
 import EditProfile from "./pages/EditProfile";
+import NotificationListener from "./components/NotificationListener";
 
 function App() {
   const [requests, setRequests] = useState([]);
+
+  const token = localStorage.getItem("token");
+  const email = localStorage.getItem("email");
 
   // useEffect(() => {
   //   connectSocket((data) => {
@@ -33,6 +37,8 @@ function App() {
   //   });
   // }, []);
 
+
+
   useEffect(() => {
 
     const theme = localStorage.getItem("theme");
@@ -43,7 +49,8 @@ function App() {
 
   }, []);
 
-  return (
+  return <>
+    {token && email && <NotificationListener />}
     <Routes>
       <Route path="/" element={<Home />} />
 
@@ -64,7 +71,8 @@ function App() {
       <Route path="/edit-profile" element={<EditProfile />} />
 
     </Routes>
-  );
+
+  </>
 }
 
 export default App;

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,21 +42,26 @@ public class UserController {
 	}
 	
 	@PostMapping("/auth/login")
-	public Map<String,String> login(@RequestBody User user) {
-		
-		User existing = userService.login(user.getEmail(), user.getPassword());
-		
-		Map<String,String> response = new HashMap<>();
-		
-		if(existing!=null) {
-			String token = jwtUtil.generateToken(existing.getEmail());
-			response.put("token", token);
-			response.put("role", existing.getRole());
-			response.put("name", existing.getName());
-		} else {
-			response.put("error", "Invalid Credentials");
-		}
-		return response;
+	public ResponseEntity<?> login(@RequestBody User user) {
+
+	    User existing = userService.login(user.getEmail(), user.getPassword());
+
+	    if (existing != null) {
+
+	        String token = jwtUtil.generateToken(existing.getEmail());
+
+	        Map<String, String> response = new HashMap<>();
+	        response.put("token", token);
+	        response.put("role", existing.getRole());
+	        response.put("name", existing.getName());
+	        response.put("email", existing.getEmail());
+
+	        return ResponseEntity.ok(response);
+	    }
+
+	    return ResponseEntity
+	            .status(HttpStatus.UNAUTHORIZED)
+	            .body("Invalid Credentials");
 	}
 	
 	@GetMapping("/auth/profile")

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import axios from "../axiosConfig";
+import toast from "react-hot-toast";
 
 const BreakdownRequest = () => {
 
@@ -34,7 +35,7 @@ const BreakdownRequest = () => {
                 formData
             );
 
-            alert("Breakdown Request Created Successfully");
+            toast.success("Breakdown request submitted successfully.");
 
             // console.log(response.data);
 
@@ -47,9 +48,9 @@ const BreakdownRequest = () => {
 
         } catch (error) {
 
-            console.error(error);
+            // console.error(error);
 
-            alert("Failed to create request");
+            toast.error("Failed to create request");
 
         } finally {
 

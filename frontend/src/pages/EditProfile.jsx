@@ -60,7 +60,7 @@ const EditProfile = () => {
 
             localStorage.setItem("name", formData.name);
 
-            alert("Profile Updated Successfully");
+            toast.success("Profile Updated Successfully");
 
             navigate("/profile");
 

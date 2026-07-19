@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "../axiosConfig";
+import toast from "react-hot-toast";
 
 const Login = () => {
 
@@ -23,27 +24,30 @@ const Login = () => {
 
             const data = response.data;
 
-            console.log("Login Successful : ", data);
+            // console.log("Login Successful : ", data);
 
             localStorage.setItem("token", data.token);
             localStorage.setItem("role", data.role);
             localStorage.setItem("name", data.name);
+            localStorage.setItem("email", data.email);
 
-            alert("Login Successful");
+            // alert("Login Successful");
+            setEmail("");
+            setPassword("");
 
             if (data.role === "MECHANIC") {
                 navigate("/mechanic")
             } else {
                 navigate("/user");
             }
-        } catch (error) {
-            console.error(error);
 
-            if (error.response) {
-                alert("❌ " + error.response.data.message);
-            } else {
-                alert("❌ Server error");
-            }
+            toast.success("Login Successful...")
+            toast.success("Welcome back!");
+        } catch (error) {
+            // console.error(error);
+            setEmail("");
+            setPassword("");
+            toast.error("Invalid email or password.");
         }
     };
 

@@ -1,6 +1,7 @@
 import axios from "../../axiosConfig";
 import { MapPin, Car, Wrench } from "lucide-react";
 import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const AvailableRequests = ({
     requests,
@@ -15,6 +16,8 @@ const AvailableRequests = ({
             await axios.put(`/api/breakdown/accept/${id}`);
             await refreshPending();
             await refreshAccepted();
+            toast.success("Request accepted.");
+            
 
         } catch (error) {
             console.log(error);
