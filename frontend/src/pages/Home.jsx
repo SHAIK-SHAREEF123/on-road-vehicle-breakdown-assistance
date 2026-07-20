@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import Login from "./Login";
+import LocationPicker from "../components/maps/LocationPicker";
 
 const Home = () => {
 
@@ -109,6 +110,10 @@ const Home = () => {
             </div>
 
         </div>
+
+        // <>
+        //     <LocationPicker />
+        // </>
     );
 };
 

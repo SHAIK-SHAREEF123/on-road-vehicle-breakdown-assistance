@@ -32,6 +32,10 @@ public class BreakdownRequest {
     private String userEmail;
 
     private String location; // simple string (no lat/long)
+    
+    private String latitude;
+    
+    private String longitude;
 
     private String vehicleType;
 

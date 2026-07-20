@@ -1,17 +1,28 @@
 import { useState } from "react";
 import axios from "../axiosConfig";
 import toast from "react-hot-toast";
+import LocationPicker from "../components/maps/LocationPicker";
 
 const BreakdownRequest = () => {
 
     const [formData, setFormData] = useState({
+
         vehicleType: "",
+
         issue: "",
+
         description: "",
-        location: ""
+
+        location: "",
+
+        latitude: "",
+
+        longitude: "",
+
     });
 
     const [loading, setLoading] = useState(false);
+    const [showMap, setShowMap] = useState(false);
 
     const handleChange = (e) => {
 
@@ -153,7 +164,7 @@ const BreakdownRequest = () => {
 
                 </div>
 
-                 {/* Description */}
+                {/* Description */}
 
                 <div>
 
@@ -190,6 +201,52 @@ const BreakdownRequest = () => {
                         className="w-full border rounded-lg p-3"
                         required
                     />
+
+                    <button
+                        type="button"
+                        onClick={() => setShowMap(!showMap)}
+                        className="
+        mt-2
+        px-4
+        py-2
+        bg-green-600
+        text-white
+        rounded-lg
+        hover:bg-green-700
+    "
+                    >
+                        {showMap ? "Hide Map" : "Select on Map"}
+                    </button>
+
+                    {
+                        showMap && (
+
+                            <div className="mt-5">
+
+                                <LocationPicker
+
+                                    onLocationSelect={(location) => {
+
+                                        setFormData(prev => ({
+
+                                            ...prev,
+
+                                            location: location.address,
+
+                                            latitude: location.latitude,
+
+                                            longitude: location.longitude,
+
+                                        }));
+
+                                    }}
+
+                                />
+
+                            </div>
+
+                        )
+                    }
 
                 </div>
 

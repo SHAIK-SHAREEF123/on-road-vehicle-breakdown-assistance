@@ -8,6 +8,8 @@ import { Toaster } from "react-hot-toast";
 import { NotificationProvider } from "./context/NotificationContext.jsx";
 
 import "./index.css";
+import "leaflet/dist/leaflet.css";
+
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
