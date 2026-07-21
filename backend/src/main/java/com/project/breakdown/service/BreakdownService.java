@@ -226,5 +226,35 @@ public class BreakdownService {
                 notification
         );
     }
+	
+	public BreakdownRequest updateMechanicLocation(
+	        String requestId,
+	        Double latitude,
+	        Double longitude,
+	        String token) {
+
+	    String mechanicEmail = jwtUtil.extractEmail(token);
+
+	    BreakdownRequest request =
+	            repo.findById(requestId)
+	                    .orElseThrow(() ->
+	                            new RuntimeException("Request not found"));
+
+	    if (!mechanicEmail.equals(request.getMechanicEmail())) {
+	        throw new RuntimeException("Unauthorized");
+	    }
+
+	    request.setMechanicLatitude(latitude);
+	    request.setMechanicLongitude(longitude);
+
+	    BreakdownRequest saved = repo.save(request);
+
+	    messagingTemplate.convertAndSend(
+	            "/topic/request-location/" + requestId,
+	            saved
+	    );
+
+	    return saved;
+	}
 
 }

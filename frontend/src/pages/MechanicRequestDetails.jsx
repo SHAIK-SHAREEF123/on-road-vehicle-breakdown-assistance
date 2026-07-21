@@ -12,6 +12,9 @@ import {
     Phone,
 } from "lucide-react";
 import RequestTimeline from "../components/user/RequestTimeline";
+import RequestLocationMap from "../components/maps/RequestLocationMap";
+import { getRouteInfo } from "../services/routeService";
+import useLiveLocation from "../hooks/useLiveLocation";
 
 
 const MechanicRequestDetails = () => {
@@ -19,6 +22,17 @@ const MechanicRequestDetails = () => {
     const { id } = useParams();
 
     const [request, setRequest] = useState(null);
+
+    const shouldTrack =
+        request?.status === "MECHANIC_ASSIGNED" ||
+        request?.status === "MECHANIC_ON_THE_WAY" ||
+        request?.status === "REPAIR_STARTED";
+
+    // Start live location tracking
+    useLiveLocation(id, shouldTrack);
+
+    const [distance, setDistance] = useState("");
+    const [duration, setDuration] = useState("");
 
     const fetchRequest = async () => {
 
@@ -37,6 +51,14 @@ const MechanicRequestDetails = () => {
     useEffect(() => {
         fetchRequest();
     }, []);
+
+    useEffect(() => {
+
+        if (request) {
+            getMechanicLocation();
+        }
+
+    }, [request]);
 
     const handleAccept = async (id) => {
 
@@ -81,6 +103,54 @@ const MechanicRequestDetails = () => {
             </div>
         );
     }
+
+    const getMechanicLocation = () => {
+
+        navigator.geolocation.getCurrentPosition(
+
+            async (position) => {
+
+                const mechanicLat =
+                    position.coords.latitude;
+
+                const mechanicLng =
+                    position.coords.longitude;
+
+                const route = await getRouteInfo(
+
+                    mechanicLat,
+                    mechanicLng,
+
+                    request.latitude,
+                    request.longitude
+
+                );
+
+                if (route) {
+
+                    setDistance(route.distance);
+
+                    setDuration(route.duration);
+
+                }
+
+            },
+
+            (error) => {
+
+                console.log(error);
+
+            },
+
+            {
+
+                enableHighAccuracy: true
+
+            }
+
+        );
+
+    };
 
     return (
 
@@ -182,6 +252,8 @@ const MechanicRequestDetails = () => {
 
                                 </div>
 
+                                {/* Location */}
+
                                 <div className="flex items-start gap-3">
 
                                     <MapPin className="text-red-500 mt-1" />
@@ -199,6 +271,88 @@ const MechanicRequestDetails = () => {
                                     </div>
 
                                 </div>
+
+                                {/* Customer Map */}
+
+                                <div className="mt-8">
+
+                                    <h2 className="text-xl font-semibold mb-4">
+                                        Customer Location
+                                    </h2>
+
+                                    <RequestLocationMap
+                                        latitude={request.latitude}
+                                        longitude={request.longitude}
+                                        mechanicLatitude={request.mechanicLatitude}
+                                        mechanicLongitude={request.mechanicLongitude}
+                                        address={request.location}
+                                    />
+
+                                </div>
+
+                                {/* Distance Card */}
+
+                                <div className="bg-white rounded-xl shadow-md p-5 mt-5">
+
+                                    <h2 className="text-xl font-bold mb-4">
+                                        Distance Information
+                                    </h2>
+
+                                    <p>
+                                        📍 {request.location}
+                                    </p>
+
+                                    <div className="mt-4">
+
+                                        <h3 className="font-semibold">
+                                            Distance
+                                        </h3>
+
+                                        <p className="text-2xl text-blue-600">
+                                            🚗 {distance} km
+                                        </p>
+
+                                    </div>
+
+                                    <div className="mt-4">
+
+                                        <h3 className="font-semibold">
+                                            Estimated Time
+                                        </h3>
+
+                                        <p className="text-2xl text-green-600">
+                                            ⏱ {duration} mins
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                                {/* Navigate Button */}
+
+                                <button
+                                    onClick={() => {
+
+                                        window.open(
+                                            `https://www.google.com/maps/dir/?api=1&destination=${request.latitude},${request.longitude}`,
+                                            "_blank"
+                                        );
+
+                                    }}
+                                    className="
+        mt-5
+        bg-green-600
+        hover:bg-green-700
+        text-white
+        px-5
+        py-3
+        rounded-lg
+    "
+                                >
+
+                                    Navigate to Customer
+
+                                </button>
 
                             </div>
 

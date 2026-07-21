@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.breakdown.model.BreakdownRequest;
+import com.project.breakdown.model.LiveLocationRequest;
 import com.project.breakdown.service.BreakdownService;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -130,5 +132,26 @@ public class BreakdownController {
 	    }
 
 	    return service.updateStatus(id, status, token);
+	}
+	
+	@PostMapping("/update-location")
+	public BreakdownRequest updateLocation(
+
+	        @RequestBody LiveLocationRequest request,
+
+	        @RequestHeader("Authorization") String token) {
+
+	    token = token.substring(7);
+
+	    return service.updateMechanicLocation(
+
+	            request.getRequestId(),
+
+	            request.getLatitude(),
+
+	            request.getLongitude(),
+
+	            token
+	    );
 	}
 }

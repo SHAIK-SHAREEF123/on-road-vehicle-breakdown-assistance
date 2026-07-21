@@ -32,7 +32,7 @@ const RequestDetails = () => {
             console.log(error);
         }
     };
-    
+
     useEffect(() => {
 
         const subscription = connectWebSocket((client) => {
@@ -66,6 +66,17 @@ const RequestDetails = () => {
                         default:
                             break;
                     }
+
+                }
+            );
+
+            client.subscribe(
+                `/topic/request-location/${id}`,
+                (message) => {
+
+                    const updatedRequest = JSON.parse(message.body);
+
+                    setRequest(updatedRequest);
 
                 }
             );

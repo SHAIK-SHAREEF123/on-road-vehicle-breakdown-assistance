@@ -9,6 +9,7 @@ const Login = () => {
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [role, setRole] = useState("USER");
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -20,6 +21,7 @@ const Login = () => {
             const response = await axios.post("/api/auth/login", {
                 email,
                 password,
+                role
             });
 
             const data = response.data;
@@ -102,9 +104,9 @@ const Login = () => {
 
                         <select
                             className="w-full p-3 mt-1 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        >
-                            <option>User</option>
-                            <option>Mechanic</option>
+                            value={role} onChange={(e) => setRole(e.target.value)}>
+                            <option value="USER">User</option>
+                            <option value="MECHANIC">Mechanic</option>
                         </select>
                     </div>
 

@@ -46,8 +46,8 @@ public class UserController {
 
 	    User existing = userService.login(user.getEmail(), user.getPassword());
 
-	    if (existing != null) {
-
+	    if (existing != null && existing.getRole() != user.getRole()) {
+	    	
 	        String token = jwtUtil.generateToken(existing.getEmail());
 
 	        Map<String, String> response = new HashMap<>();

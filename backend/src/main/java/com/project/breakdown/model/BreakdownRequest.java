@@ -33,9 +33,11 @@ public class BreakdownRequest {
 
     private String location; // simple string (no lat/long)
     
-    private String latitude;
-    
-    private String longitude;
+    private Double latitude;
+    private Double longitude;
+
+    private Double mechanicLatitude;    
+    private Double mechanicLongitude;
 
     private String vehicleType;
 
